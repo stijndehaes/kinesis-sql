@@ -27,6 +27,7 @@ import org.apache.spark.internal.Logging
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.{Attribute, Cast, UnsafeProjection}
 import org.apache.spark.sql.types.{BinaryType, StringType}
+import org.sparkproject.guava.util.concurrent.MoreExecutors
 
 private[kinesis] class KinesisWriteTask(producerConfiguration: Map[String, String],
                                         inputSchema: Seq[Attribute]) extends Logging {
@@ -76,7 +77,7 @@ private[kinesis] class KinesisWriteTask(producerConfiguration: Map[String, Strin
         sentSeqNumbers = result.getSequenceNumber
       }
     }
-    Futures.addCallback(future, kinesisCallBack)
+    Futures.addCallback(future, kinesisCallBack, MoreExecutors.sameThreadExecutor())
 
     sentSeqNumbers
   }
